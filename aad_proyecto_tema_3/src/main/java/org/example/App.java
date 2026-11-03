@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.gestionProyectos.menus.PiezaMenu;
 import org.example.gestionProyectos.menus.ProveedorMenu;
 import org.example.gestionProyectos.util.HibernateUtil;
 
@@ -11,9 +12,9 @@ public class App {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
-            ProveedorMenu proveedorMenu = new ProveedorMenu(scanner);
+            PiezaMenu piezaMenu = new PiezaMenu(scanner);
 
-            proveedorMenu.mostrar();
+            piezaMenu.mostrar();
 
         } finally {
 
