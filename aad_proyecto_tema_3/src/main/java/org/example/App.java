@@ -1,6 +1,7 @@
+
 package org.example;
 
-import org.example.gestionProyectos.menus.ProyectoMenu;
+import org.example.gestionProyectos.menus.GestionMenu;
 import org.example.gestionProyectos.util.HibernateUtil;
 
 import java.util.Scanner;
@@ -11,9 +12,9 @@ public class App {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
-            ProyectoMenu proyectoMenu = new ProyectoMenu(scanner);
+            GestionMenu gestionMenu = new GestionMenu(scanner);
 
-            proyectoMenu.mostrar();
+            gestionMenu.mostrar();
 
         } finally {
 
