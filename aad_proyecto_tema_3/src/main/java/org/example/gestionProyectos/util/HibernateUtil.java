@@ -13,13 +13,9 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            return new Configuration()
-                    .configure("hibernate.cfg.xml")
+            return new Configuration().configure("hibernate.cfg.xml")
 
-                    .addAnnotatedClass(Proveedor.class)
-                    .addAnnotatedClass(Pieza.class)
-                    .addAnnotatedClass(Proyecto.class)
-                    .addAnnotatedClass(Gestion.class)
+                    .addAnnotatedClass(Proveedor.class).addAnnotatedClass(Pieza.class).addAnnotatedClass(Proyecto.class).addAnnotatedClass(Gestion.class)
 
                     .buildSessionFactory();
 

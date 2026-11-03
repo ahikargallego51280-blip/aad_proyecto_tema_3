@@ -65,10 +65,6 @@ public class Proyecto {
 
     @Override
     public String toString() {
-        return "Proyecto{" +
-                "codigo='" + codigo + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", ciudad='" + ciudad + '\'' +
-                '}';
+        return "Proyecto{" + "codigo='" + codigo + '\'' + ", nombre='" + nombre + '\'' + ", ciudad='" + ciudad + '\'' + '}';
     }
 }

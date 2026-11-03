@@ -1,4 +1,3 @@
-
 package org.example.gestionProyectos.dao;
 
 import org.example.gestionProyectos.entities.Proveedor;
@@ -115,9 +114,7 @@ public class ProveedorDAO {
 
         try (Session session = sessionFactory.openSession()) {
 
-            return session.createQuery("FROM Proveedor p WHERE LOWER(p.nombre) LIKE :nombre", Proveedor.class)
-                    .setParameter("nombre", "%" + nombre.trim().toLowerCase(Locale.ROOT) + "%")
-                    .getResultList();
+            return session.createQuery("FROM Proveedor p WHERE LOWER(p.nombre) LIKE :nombre", Proveedor.class).setParameter("nombre", "%" + nombre.trim().toLowerCase(Locale.ROOT) + "%").getResultList();
         }
     }
 
@@ -125,9 +122,7 @@ public class ProveedorDAO {
 
         try (Session session = sessionFactory.openSession()) {
 
-            return session.createQuery("FROM Proveedor p WHERE LOWER(p.direccionPostal) LIKE :direccion", Proveedor.class)
-                    .setParameter("direccion", "%" + direccion.trim().toLowerCase(Locale.ROOT) + "%")
-                    .getResultList();
+            return session.createQuery("FROM Proveedor p WHERE LOWER(p.direccionPostal) LIKE :direccion", Proveedor.class).setParameter("direccion", "%" + direccion.trim().toLowerCase(Locale.ROOT) + "%").getResultList();
         }
     }
 

@@ -78,11 +78,6 @@ public class Pieza {
 
     @Override
     public String toString() {
-        return "Pieza{" +
-                "codigo='" + codigo + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", precio=" + precio +
-                ", descripcion='" + descripcion + '\'' +
-                '}';
+        return "Pieza{" + "codigo='" + codigo + '\'' + ", nombre='" + nombre + '\'' + ", precio=" + precio + ", descripcion='" + descripcion + '\'' + '}';
     }
 }

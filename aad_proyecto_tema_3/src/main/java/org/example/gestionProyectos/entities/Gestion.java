@@ -112,10 +112,6 @@ public class Gestion {
 
     @Override
     public String toString() {
-        return "Gestion{" +
-                "id=" + id +
-                ", fecha=" + fecha +
-                ", cantidad=" + cantidad +
-                '}';
+        return "Gestion{" + "id=" + id + ", fecha=" + fecha + ", cantidad=" + cantidad + '}';
     }
 }

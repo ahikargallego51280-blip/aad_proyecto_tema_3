@@ -1,31 +1,25 @@
 package org.example;
 
+import org.example.gestionProyectos.menus.ProveedorMenu;
 import org.example.gestionProyectos.util.HibernateUtil;
-import org.hibernate.Session;
+
+import java.util.Scanner;
 
 public class App {
+
     public static void main(String[] args) {
 
-        try (Session session = HibernateUtil
-                .getSessionFactory()
-                .openSession()) {
+        try (Scanner scanner = new Scanner(System.in)) {
 
-            session.doWork(connection -> {
-                try (var statement = connection.createStatement();
-                     var result = statement.executeQuery("SELECT 1")) {
+            ProveedorMenu proveedorMenu = new ProveedorMenu(scanner);
 
-                    if (result.next()) {
-                        System.out.println("Conexión con la base de datos correcta.");
-                    }
-                }
-            });
-
-        } catch (Exception e) {
-            System.err.println("Error al conectar con la base de datos:");
-            e.printStackTrace();
+            proveedorMenu.mostrar();
 
         } finally {
+
             HibernateUtil.shutdown();
+
+            System.out.println("\nAplicación finalizada.");
         }
     }
 }
