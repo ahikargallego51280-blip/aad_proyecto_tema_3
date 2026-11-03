@@ -3,8 +3,7 @@ package org.example;
 import org.example.gestionProyectos.util.HibernateUtil;
 import org.hibernate.Session;
 
-public class App 
-{
+public class App {
     public static void main(String[] args) {
 
         try (Session session = HibernateUtil
@@ -16,9 +15,7 @@ public class App
                      var result = statement.executeQuery("SELECT 1")) {
 
                     if (result.next()) {
-                        System.out.println(
-                                "Conexión con la base de datos correcta."
-                        );
+                        System.out.println("Conexión con la base de datos correcta.");
                     }
                 }
             });

@@ -28,8 +28,7 @@ public class Proveedor {
     public Proveedor() {
     }
 
-    public Proveedor(String codigo, String nombre,
-                     String apellidos, String direccionPostal) {
+    public Proveedor(String codigo, String nombre, String apellidos, String direccionPostal) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.apellidos = apellidos;

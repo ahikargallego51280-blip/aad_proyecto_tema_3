@@ -29,8 +29,7 @@ public class Pieza {
     public Pieza() {
     }
 
-    public Pieza(String codigo, String nombre,
-                 BigDecimal precio, String descripcion) {
+    public Pieza(String codigo, String nombre, BigDecimal precio, String descripcion) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.precio = precio;

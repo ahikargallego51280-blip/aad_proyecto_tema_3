@@ -34,8 +34,7 @@ public class Gestion {
     public Gestion() {
     }
 
-    public Gestion(LocalDate fecha, Integer cantidad,
-                   Proveedor proveedor, Pieza pieza, Proyecto proyecto) {
+    public Gestion(LocalDate fecha, Integer cantidad, Proveedor proveedor, Pieza pieza, Proyecto proyecto) {
         this.fecha = fecha;
         this.cantidad = cantidad;
         setProveedor(proveedor);
