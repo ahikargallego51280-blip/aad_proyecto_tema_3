@@ -2,6 +2,7 @@ package org.example.gestionProyectos.services;
 
 import org.example.gestionProyectos.dao.ProveedorDAO;
 import org.example.gestionProyectos.entities.Proveedor;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.sql.SQLException;
 
@@ -115,7 +116,7 @@ public class ProveedorService {
 
         while (actual != null) {
 
-            if (actual instanceof org.hibernate.exception.ConstraintViolationException) {
+            if (actual instanceof ConstraintViolationException) {
                 return true;
             }
 

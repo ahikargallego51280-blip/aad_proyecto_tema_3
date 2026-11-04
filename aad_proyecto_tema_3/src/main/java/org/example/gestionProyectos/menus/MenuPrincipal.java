@@ -25,7 +25,7 @@ public class MenuPrincipal {
 
         boolean salir = false;
 
-        while (!salir) {
+        while (!salir && scanner.hasNextLine()) {
 
             System.out.println("\n========================================");
             System.out.println("       SISTEMA DE GESTIÓN DE PROYECTOS");
@@ -45,19 +45,19 @@ public class MenuPrincipal {
             switch (opcion) {
 
                 case "1":
-                    proveedorMenu.mostrar();
+                    ejecutarSubmenu(proveedorMenu::mostrar, "proveedores");
                     break;
 
                 case "2":
-                    piezaMenu.mostrar();
+                    ejecutarSubmenu(piezaMenu::mostrar, "piezas");
                     break;
 
                 case "3":
-                    proyectoMenu.mostrar();
+                    ejecutarSubmenu(proyectoMenu::mostrar, "proyectos");
                     break;
 
                 case "4":
-                    gestionMenu.mostrar();
+                    ejecutarSubmenu(gestionMenu::mostrar, "suministros");
                     break;
 
                 case "5":
@@ -73,6 +73,24 @@ public class MenuPrincipal {
                     System.out.println("Opción no válida. Inténtalo de nuevo.");
                     break;
             }
+        }
+
+        if (!salir) {
+            System.out.println("\nFin de la entrada. Cerrando la aplicación...");
+        }
+    }
+
+    private void ejecutarSubmenu(Runnable submenu, String nombre) {
+
+        try {
+
+            submenu.run();
+
+        } catch (RuntimeException e) {
+
+            System.err.println("\nSe ha producido un error inesperado en el módulo de " + nombre + ".");
+
+            System.err.println("Motivo: " + e.getMessage());
         }
     }
 

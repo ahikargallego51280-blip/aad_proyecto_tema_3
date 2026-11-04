@@ -5,6 +5,7 @@ import org.example.gestionProyectos.services.ProveedorService;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 public class ProveedorMenu {
 
@@ -20,7 +21,7 @@ public class ProveedorMenu {
 
         boolean volver = false;
 
-        while (!volver) {
+        while (!volver && scanner.hasNextLine()) {
             System.out.println("\n========================================");
             System.out.println("          GESTIÓN DE PROVEEDORES");
             System.out.println("========================================");
@@ -309,7 +310,15 @@ public class ProveedorMenu {
 
     private void mostrarError(String operacion, Exception e) {
 
+        if (e instanceof NoSuchElementException) {
+            System.out.println("\nEntrada finalizada. Se ha cancelado la operación.");
+            return;
+        }
+
         System.out.println("\nNo se ha podido " + operacion + ".");
-        System.out.println("Motivo: " + e.getMessage());
+
+        if (e.getMessage() != null) {
+            System.out.println("Motivo: " + e.getMessage());
+        }
     }
 }

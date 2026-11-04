@@ -5,6 +5,7 @@ import org.example.gestionProyectos.services.ProyectoService;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 public class ProyectoMenu {
 
@@ -21,7 +22,7 @@ public class ProyectoMenu {
 
         boolean volver = false;
 
-        while (!volver) {
+        while (!volver && scanner.hasNextLine()) {
 
             System.out.println("\n========================================");
             System.out.println("          GESTIÓN DE PROYECTOS");
@@ -318,7 +319,15 @@ public class ProyectoMenu {
 
     private void mostrarError(String operacion, Exception e) {
 
+        if (e instanceof NoSuchElementException) {
+            System.out.println("\nEntrada finalizada. Se ha cancelado la operación.");
+            return;
+        }
+
         System.out.println("\nNo se ha podido " + operacion + ".");
-        System.out.println("Motivo: " + e.getMessage());
+
+        if (e.getMessage() != null) {
+            System.out.println("Motivo: " + e.getMessage());
+        }
     }
 }
