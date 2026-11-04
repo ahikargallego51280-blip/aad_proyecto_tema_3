@@ -2,7 +2,8 @@ package org.example.gestionProyectos.services;
 
 import org.example.gestionProyectos.dao.ProveedorDAO;
 import org.example.gestionProyectos.entities.Proveedor;
-import org.hibernate.exception.ConstraintViolationException;
+
+import java.sql.SQLException;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ProveedorService {
         proveedorDAO.guardar(proveedor);
     }
 
+
     public boolean eliminar(String codigo) {
 
         validarCodigo(codigo);
@@ -32,37 +34,38 @@ public class ProveedorService {
         try {
             return proveedorDAO.eliminar(codigo.trim());
 
-        } catch (ConstraintViolationException e) {
-            throw new IllegalStateException("No se puede eliminar el proveedor porque tiene suministros asociados.");
+        } catch (RuntimeException e) {
+
+            if (esViolacionIntegridad(e)) {
+                throw new IllegalStateException("No se puede eliminar el proveedor porque tiene suministros asociados.");
+            }
+
+            throw e;
         }
     }
 
-    public boolean actualizar(Proveedor proveedor) {
 
+    public boolean actualizar(Proveedor proveedor) {
         validarProveedor(proveedor);
         return proveedorDAO.actualizar(proveedor);
     }
 
     public Proveedor buscarPorCodigo(String codigo) {
-
         validarCodigo(codigo);
         return proveedorDAO.buscarPorCodigo(codigo.trim());
     }
 
     public List<Proveedor> buscarPorNombre(String nombre) {
-
         validarBusqueda(nombre, "nombre");
         return proveedorDAO.buscarPorNombre(nombre.trim());
     }
 
     public List<Proveedor> buscarPorDireccion(String direccion) {
-
         validarBusqueda(direccion, "dirección");
         return proveedorDAO.buscarPorDireccion(direccion.trim());
     }
 
     public List<Proveedor> listarTodos() {
-
         return proveedorDAO.listarTodos();
     }
 
@@ -74,11 +77,8 @@ public class ProveedorService {
         }
 
         proveedor.setCodigo(validarCampo(proveedor.getCodigo(), "código", 20));
-
         proveedor.setNombre(validarCampo(proveedor.getNombre(), "nombre", 100));
-
         proveedor.setApellidos(validarCampo(proveedor.getApellidos(), "apellidos", 150));
-
         proveedor.setDireccionPostal(validarCampo(proveedor.getDireccionPostal(), "dirección postal", 255));
     }
 
@@ -107,4 +107,31 @@ public class ProveedorService {
             throw new IllegalArgumentException("Debes introducir un " + campo + " para realizar la búsqueda.");
         }
     }
+
+
+    private boolean esViolacionIntegridad(Throwable error) {
+
+        Throwable actual = error;
+
+        while (actual != null) {
+
+            if (actual instanceof org.hibernate.exception.ConstraintViolationException) {
+                return true;
+            }
+
+            if (actual instanceof SQLException sqlException) {
+
+                String sqlState = sqlException.getSQLState();
+
+                if (sqlState != null && sqlState.startsWith("23")) {
+                    return true;
+                }
+            }
+
+            actual = actual.getCause();
+        }
+
+        return false;
+    }
+
 }
