@@ -61,10 +61,17 @@ public class GestionService {
 
         validarId(id);
         validarDatos(fecha, cantidad);
+
+        if (gestionDAO.buscarPorId(id) == null) {
+            return false;
+        }
+
         proveedorCodigo = validarCodigoRelacionado(proveedorCodigo, "proveedor");
         piezaCodigo = validarCodigoRelacionado(piezaCodigo, "pieza");
         proyectoCodigo = validarCodigoRelacionado(proyectoCodigo, "proyecto");
+
         comprobarReferencias(proveedorCodigo, piezaCodigo, proyectoCodigo);
+
         return gestionDAO.actualizar(id, fecha, cantidad, proveedorCodigo, piezaCodigo, proyectoCodigo);
     }
 
