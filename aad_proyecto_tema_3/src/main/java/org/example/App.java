@@ -1,7 +1,7 @@
 
 package org.example;
 
-import org.example.gestionProyectos.menus.GestionMenu;
+import org.example.gestionProyectos.menus.MenuPrincipal;
 import org.example.gestionProyectos.util.HibernateUtil;
 
 import java.util.Scanner;
@@ -12,9 +12,17 @@ public class App {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
-            GestionMenu gestionMenu = new GestionMenu(scanner);
+            MenuPrincipal menuPrincipal = new MenuPrincipal(scanner);
 
-            gestionMenu.mostrar();
+            menuPrincipal.mostrar();
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Se ha producido un error inesperado en la aplicación."
+            );
+
+            System.err.println("Motivo: " + e.getMessage());
 
         } finally {
 
