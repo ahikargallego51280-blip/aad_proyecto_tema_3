@@ -6,10 +6,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Locale;
 
 public class ProveedorDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProveedorDAO.class);
 
     private final SessionFactory sessionFactory;
 
@@ -29,12 +34,15 @@ public class ProveedorDAO {
 
             transaction.commit();
 
+            logger.info("Proveedor guardado correctamente. Código: {}", proveedor.getCodigo());
+
         } catch (RuntimeException e) {
 
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
 
+            logger.error("Error al guardar el proveedor. Código: {}", proveedor.getCodigo(), e);
             throw e;
         }
     }
@@ -51,12 +59,15 @@ public class ProveedorDAO {
 
             if (proveedor == null) {
                 transaction.commit();
+                logger.warn("No se encontró el proveedor que se intentaba eliminar. Código: {}", codigo);
                 return false;
             }
 
             session.remove(proveedor);
 
             transaction.commit();
+
+            logger.info("Proveedor eliminado correctamente. Código: {}", codigo);
 
             return true;
 
@@ -66,6 +77,7 @@ public class ProveedorDAO {
                 transaction.rollback();
             }
 
+            logger.error("Error al eliminar el proveedor. Código: {}", codigo, e);
             throw e;
         }
     }
@@ -82,6 +94,7 @@ public class ProveedorDAO {
 
             if (existente == null) {
                 transaction.commit();
+                logger.warn("No se encontró el proveedor que se intentaba actualizar. Código: {}", proveedor.getCodigo());
                 return false;
             }
 
@@ -91,6 +104,8 @@ public class ProveedorDAO {
 
             transaction.commit();
 
+            logger.info("Proveedor actualizado correctamente. Código: {}", proveedor.getCodigo());
+
             return true;
 
         } catch (RuntimeException e) {
@@ -99,6 +114,7 @@ public class ProveedorDAO {
                 transaction.rollback();
             }
 
+            logger.error("Error al actualizar el proveedor. Código: {}", proveedor.getCodigo(), e);
             throw e;
         }
     }
@@ -106,7 +122,20 @@ public class ProveedorDAO {
     public Proveedor buscarPorCodigo(String codigo) {
 
         try (Session session = sessionFactory.openSession()) {
-            return session.get(Proveedor.class, codigo);
+
+            Proveedor proveedor = session.get(Proveedor.class, codigo);
+
+            if (proveedor == null) {
+                logger.warn("No se encontró ningún proveedor con código: {}", codigo);
+            } else {
+                logger.info("Proveedor encontrado. Código: {}", codigo);
+            }
+
+            return proveedor;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar el proveedor por código: {}", codigo, e);
+            throw e;
         }
     }
 
@@ -114,7 +143,15 @@ public class ProveedorDAO {
 
         try (Session session = sessionFactory.openSession()) {
 
-            return session.createQuery("FROM Proveedor p WHERE LOWER(p.nombre) LIKE :nombre", Proveedor.class).setParameter("nombre", "%" + nombre.trim().toLowerCase(Locale.ROOT) + "%").getResultList();
+            List<Proveedor> proveedores = session.createQuery("FROM Proveedor p WHERE LOWER(p.nombre) LIKE :nombre", Proveedor.class).setParameter("nombre", "%" + nombre.trim().toLowerCase(Locale.ROOT) + "%").getResultList();
+
+            logger.info("Búsqueda de proveedores por nombre '{}'. Resultados: {}", nombre, proveedores.size());
+
+            return proveedores;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar proveedores por nombre: {}", nombre, e);
+            throw e;
         }
     }
 
@@ -122,7 +159,15 @@ public class ProveedorDAO {
 
         try (Session session = sessionFactory.openSession()) {
 
-            return session.createQuery("FROM Proveedor p WHERE LOWER(p.direccionPostal) LIKE :direccion", Proveedor.class).setParameter("direccion", "%" + direccion.trim().toLowerCase(Locale.ROOT) + "%").getResultList();
+            List<Proveedor> proveedores = session.createQuery("FROM Proveedor p WHERE LOWER(p.direccionPostal) LIKE :direccion", Proveedor.class).setParameter("direccion", "%" + direccion.trim().toLowerCase(Locale.ROOT) + "%").getResultList();
+
+            logger.info("Búsqueda de proveedores por dirección '{}'. Resultados: {}", direccion, proveedores.size());
+
+            return proveedores;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al buscar proveedores por dirección: {}", direccion, e);
+            throw e;
         }
     }
 
@@ -130,7 +175,15 @@ public class ProveedorDAO {
 
         try (Session session = sessionFactory.openSession()) {
 
-            return session.createQuery("FROM Proveedor p ORDER BY p.nombre", Proveedor.class).getResultList();
+            List<Proveedor> proveedores = session.createQuery("FROM Proveedor p ORDER BY p.nombre", Proveedor.class).getResultList();
+
+            logger.info("Listado de proveedores completado. Total: {}", proveedores.size());
+
+            return proveedores;
+
+        } catch (RuntimeException e) {
+            logger.error("Error al listar los proveedores.", e);
+            throw e;
         }
     }
 }

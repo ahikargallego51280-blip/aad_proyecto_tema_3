@@ -4,15 +4,23 @@ import org.example.gestionProyectos.dao.ProyectoDAO;
 import org.example.gestionProyectos.entities.Proyecto;
 import org.hibernate.exception.ConstraintViolationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.List;
 
 public class ProyectoService {
 
     private final ProyectoDAO proyectoDAO;
+    private static final Logger logger = LoggerFactory.getLogger(ProyectoService.class);
 
     public ProyectoService() {
-        this.proyectoDAO = new ProyectoDAO();
+        this(new ProyectoDAO());
+    }
+
+    public ProyectoService(ProyectoDAO proyectoDAO) {
+        this.proyectoDAO = java.util.Objects.requireNonNull(proyectoDAO);
     }
 
 
@@ -21,10 +29,12 @@ public class ProyectoService {
         validarProyecto(proyecto);
 
         if (proyectoDAO.buscarPorCodigo(proyecto.getCodigo()) != null) {
+            logger.warn("Intento de registrar un proyecto con código duplicado: {}", proyecto.getCodigo());
             throw new IllegalArgumentException("Ya existe un proyecto con ese código.");
         }
 
         proyectoDAO.guardar(proyecto);
+        logger.info("Proyecto registrado correctamente: {}", proyecto.getCodigo());
     }
 
 
@@ -33,7 +43,15 @@ public class ProyectoService {
         validarCodigo(codigo);
 
         try {
-            return proyectoDAO.eliminar(codigo.trim());
+            boolean eliminado = proyectoDAO.eliminar(codigo.trim());
+
+            if (eliminado) {
+                logger.info("Proyecto eliminado: {}", codigo.trim());
+            } else {
+                logger.warn("No se encontró el proyecto que se intentaba eliminar: {}", codigo.trim());
+            }
+
+            return eliminado;
 
         } catch (RuntimeException e) {
 
@@ -50,7 +68,15 @@ public class ProyectoService {
 
         validarProyecto(proyecto);
 
-        return proyectoDAO.actualizar(proyecto);
+        boolean actualizado = proyectoDAO.actualizar(proyecto);
+
+        if (actualizado) {
+            logger.info("Proyecto actualizado: {}", proyecto.getCodigo());
+        } else {
+            logger.warn("No se encontró el proyecto que se intentaba actualizar: {}", proyecto.getCodigo());
+        }
+
+        return actualizado;
     }
 
 
