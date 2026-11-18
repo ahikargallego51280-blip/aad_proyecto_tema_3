@@ -9,12 +9,20 @@ import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PiezaService {
 
     private final PiezaDAO piezaDAO;
+    private static final Logger logger = LoggerFactory.getLogger(PiezaService.class);
 
     public PiezaService() {
-        this.piezaDAO = new PiezaDAO();
+        this(new PiezaDAO());
+    }
+
+    public PiezaService(PiezaDAO piezaDAO) {
+        this.piezaDAO = java.util.Objects.requireNonNull(piezaDAO);
     }
 
 
@@ -23,10 +31,12 @@ public class PiezaService {
         validarPieza(pieza);
 
         if (piezaDAO.buscarPorCodigo(pieza.getCodigo()) != null) {
+            logger.warn("Intento de registrar una pieza con código duplicado: {}", pieza.getCodigo());
             throw new IllegalArgumentException("Ya existe una pieza con ese código.");
         }
 
         piezaDAO.guardar(pieza);
+        logger.info("Pieza registrada correctamente: {}", pieza.getCodigo());
     }
 
     public boolean eliminar(String codigo) {
@@ -34,7 +44,15 @@ public class PiezaService {
         validarCodigo(codigo);
 
         try {
-            return piezaDAO.eliminar(codigo.trim());
+            boolean eliminado = piezaDAO.eliminar(codigo.trim());
+
+            if (eliminado) {
+                logger.info("Pieza eliminada: {}", codigo.trim());
+            } else {
+                logger.warn("No se encontró la pieza que se intentaba eliminar: {}", codigo.trim());
+            }
+
+            return eliminado;
         } catch (RuntimeException e) {
 
             if (esViolacionIntegridad(e)) {
@@ -48,7 +66,15 @@ public class PiezaService {
     public boolean actualizar(Pieza pieza) {
 
         validarPieza(pieza);
-        return piezaDAO.actualizar(pieza);
+        boolean actualizado = piezaDAO.actualizar(pieza);
+
+        if (actualizado) {
+            logger.info("Pieza actualizada: {}", pieza.getCodigo());
+        } else {
+            logger.warn("No se encontró la pieza que se intentaba actualizar: {}", pieza.getCodigo());
+        }
+
+        return actualizado;
     }
 
     public Pieza buscarPorCodigo(String codigo) {

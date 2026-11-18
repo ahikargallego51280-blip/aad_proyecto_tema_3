@@ -6,14 +6,22 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 public class ProveedorService {
 
     private final ProveedorDAO proveedorDAO;
+    private static final Logger logger = LoggerFactory.getLogger(ProveedorService.class);
 
     public ProveedorService() {
-        this.proveedorDAO = new ProveedorDAO();
+        this(new ProveedorDAO());
+    }
+
+    public ProveedorService(ProveedorDAO proveedorDAO) {
+        this.proveedorDAO = java.util.Objects.requireNonNull(proveedorDAO);
     }
 
     public void registrar(Proveedor proveedor) {
@@ -21,10 +29,12 @@ public class ProveedorService {
         validarProveedor(proveedor);
 
         if (proveedorDAO.buscarPorCodigo(proveedor.getCodigo()) != null) {
+            logger.warn("Intento de registrar un proveedor con código duplicado: {}", proveedor.getCodigo());
             throw new IllegalArgumentException("Ya existe un proveedor con ese código.");
         }
 
         proveedorDAO.guardar(proveedor);
+        logger.info("Proveedor registrado correctamente: {}", proveedor.getCodigo());
     }
 
 
@@ -33,7 +43,15 @@ public class ProveedorService {
         validarCodigo(codigo);
 
         try {
-            return proveedorDAO.eliminar(codigo.trim());
+            boolean eliminado = proveedorDAO.eliminar(codigo.trim());
+
+            if (eliminado) {
+                logger.info("Proveedor eliminado: {}", codigo.trim());
+            } else {
+                logger.warn("No se encontró el proveedor que se intentaba eliminar: {}", codigo.trim());
+            }
+
+            return eliminado;
 
         } catch (RuntimeException e) {
 
@@ -48,7 +66,15 @@ public class ProveedorService {
 
     public boolean actualizar(Proveedor proveedor) {
         validarProveedor(proveedor);
-        return proveedorDAO.actualizar(proveedor);
+        boolean actualizado = proveedorDAO.actualizar(proveedor);
+
+        if (actualizado) {
+            logger.info("Proveedor actualizado: {}", proveedor.getCodigo());
+        } else {
+            logger.warn("No se encontró el proveedor que se intentaba actualizar: {}", proveedor.getCodigo());
+        }
+
+        return actualizado;
     }
 
     public Proveedor buscarPorCodigo(String codigo) {
