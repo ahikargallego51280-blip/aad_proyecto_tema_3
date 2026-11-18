@@ -16,7 +16,6 @@ public class App {
         boolean hibernateInicializado = false;
 
         try {
-
             logger.info("Iniciando aplicación de gestión de proyectos.");
 
             HibernateUtil.getSessionFactory();
@@ -24,48 +23,57 @@ public class App {
 
             logger.info("Hibernate inicializado correctamente.");
 
-            try (Scanner scanner = new Scanner(System.in)) {
-
-                MenuPrincipal menuPrincipal = new MenuPrincipal(scanner);
-                menuPrincipal.mostrar();
-            }
+            ejecutarAplicacion();
 
         } catch (ExceptionInInitializerError e) {
 
+            Throwable causa = e.getCause() != null ? e.getCause() : e;
+
             logger.error("No se ha podido inicializar Hibernate.", e);
 
-            System.err.println("No se ha podido inicializar Hibernate.");
-
-            Throwable causa = e.getCause();
-
-            if (causa != null && causa.getMessage() != null) {
-                System.err.println("Motivo: " + causa.getMessage());
-            }
+            System.err.println("\nNo se ha podido inicializar Hibernate.");
+            System.err.println("Motivo: " + causa.getMessage());
 
         } catch (Exception e) {
 
             logger.error("Se ha producido un error inesperado en la aplicación.", e);
 
-            System.err.println("Se ha producido un error inesperado en la aplicación.");
-
-            if (e.getMessage() != null) {
-                System.err.println("Motivo: " + e.getMessage());
-            }
+            System.err.println("\nSe ha producido un error inesperado.");
+            System.err.println("Motivo: " + e.getMessage());
 
         } finally {
 
-            if (hibernateInicializado) {
-                try {
-                    HibernateUtil.shutdown();
-                    logger.info("Hibernate cerrado correctamente.");
-                } catch (RuntimeException e) {
-                    logger.error("Error al cerrar la conexión con Hibernate.", e);
-                    System.err.println("Error al cerrar la conexión con Hibernate: " + e.getMessage());
-                }
-            }
+            cerrarHibernate(hibernateInicializado);
 
             logger.info("Aplicación finalizada.");
             System.out.println("\nAplicación finalizada.");
+        }
+    }
+
+    private static void ejecutarAplicacion() {
+
+        try (Scanner scanner = new Scanner(System.in)) {
+
+            MenuPrincipal menuPrincipal = new MenuPrincipal(scanner);
+            menuPrincipal.mostrar();
+        }
+    }
+
+    private static void cerrarHibernate(boolean inicializado) {
+
+        if (!inicializado) {
+            return;
+        }
+
+        try {
+            HibernateUtil.shutdown();
+            logger.info("Hibernate cerrado correctamente.");
+
+        } catch (RuntimeException e) {
+
+            logger.error("Error al cerrar Hibernate.", e);
+
+            System.err.println("Error al cerrar la conexión con Hibernate: " + e.getMessage());
         }
     }
 }
